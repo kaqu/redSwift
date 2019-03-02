@@ -1,15 +1,12 @@
-//
-//  AppDelegate.swift
-//  RedSwift
-//
-//  Created by Kacper Kaliński on 31/01/2019.
-//  Copyright © 2019 Miquido. All rights reserved.
-//
-
 import UIKit
 import Module
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    private let rootController = Root.build(context: Void(), initialState: Root.State())
+    let root: Root.Module = Root.instantiate(with: Root.State(), in: Root.Context(presenter: Root.Presenter.init()), using: InstantExecutor())
+    
+    func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        root.perform(.prepareDashboard)
+        return true
+    }
 }

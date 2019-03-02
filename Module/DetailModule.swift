@@ -1,93 +1,103 @@
-//
-//  DetailModule.swift
-//  Module
-//
-//  Created by Kacper Kaliński on 01/02/2019.
-//  Copyright © 2019 Miquido. All rights reserved.
-//
-
 import UIKit
 
 public enum Detail: ModuleDescription {
+    public final class View: UIViewController {
+        internal var interactor: ((Operation) -> Void)?
+        
+        public override func loadView() {
+            super.loadView()
+            view.backgroundColor = .white
+            
+            let button = UIButton()
+            button.translatesAutoresizingMaskIntoConstraints = false
+            button.setTitle("Bounce", for: .normal)
+            button.setTitleColor(.blue, for: .normal)
+            button.addTarget(self, action: #selector(buttonTap), for: .touchUpInside)
+            view.addSubview(button)
+            NSLayoutConstraint.activate([
+                button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+                ])
+        }
+        
+        @objc private func buttonTap() {
+            interactor?(.bounce)
+        }
+        
+        public override func willMove(toParent parent: UIViewController?) {
+            super.willMove(toParent: parent)
+            guard parent == nil else { return }
+            interactor?(.back)
+        }
+    }
+    
+    public struct Presenter {
+        public init(detailView: Detail.View) {
+        }
+    }
+    
     public struct State {
         public init() {}
     }
-
-    public enum Change {}
-
-    public enum Task {
-        case goBack
+    
+    public enum Operation {
+        case bounce
+        case back
     }
-
-    public enum Message {
-        case goBack
+    
+    public enum Work {
+        case present(Presentation)
+        public enum Presentation {}
+        
+        case perform(Task)
+        public enum Task {
+            case bounce
+            case back
+        }
     }
-
+    
     public struct Context {
-        var parentHandle: (Dashboard.Message) -> Void
-        public init(parentHandle: @escaping (Dashboard.Message) -> Void) {
-            self.parentHandle = parentHandle
+        fileprivate let presenter: Presenter
+        fileprivate let parentInteractor: (Dashboard.Operation) -> Void
+        public init(presenter: Presenter, parentInteractor: @escaping (Dashboard.Operation) -> Void) {
+            self.presenter = presenter
+            self.parentInteractor = parentInteractor
         }
     }
+}
 
-    public static func presenterFactory() -> Presenter {
-        final class ViewController: UIViewController {
-            public func present(change: Detail.Change) {
-                switch change {}
-            }
-
-            public typealias Module = Detail
-
-            weak var controller: Detail.Controller?
-
-            public func setup(with controller: Detail.Controller) {
-                self.controller = controller
-            }
-
-            public override func loadView() {
-                super.loadView()
-                view.backgroundColor = UIColor.lightGray
-                let button = UIButton()
-                button.translatesAutoresizingMaskIntoConstraints = false
-                button.setTitle("Back", for: .normal)
-                button.setTitleColor(.blue, for: .normal)
-                button.addTarget(self, action: #selector(buttonTap), for: .touchUpInside)
-                view.addSubview(button)
-                NSLayoutConstraint.activate([
-                    button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-                    button.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-                ])
-            }
-
-            @objc
-            func buttonTap() {
-                controller?.handle(.goBack)
-            }
-        }
-
-        let viewController = ViewController()
-        return .init(setup: viewController.setup(with:),
-                     present: viewController.present(change:),
-                     uiViewController: { viewController })
-    }
-
-    public static func initialize(state _: Detail.State) -> (changes: [Detail.Change], tasks: [Detail.Task]) {
-        return (changes: [], tasks: [])
-    }
-
-    public static func workerFactory(context: Detail.Context) -> (@escaping (Detail.Message) -> Void, Detail.Task) -> Void {
-        return { _, task in
-            switch task {
-                case .goBack:
-                    context.parentHandle(.backFromDetail)
+extension Detail.Operation: ModuleOperation {
+    public typealias Module = Detail
+    public var action: Detail.Action {
+        return { _ in
+            switch self {
+            case .bounce:
+                return [.perform(.bounce)]
+            case .back:
+                return [.perform(.back)]
             }
         }
     }
+}
 
-    public static func dispatcher(state _: inout Detail.State, message: Detail.Message) -> (changes: [Detail.Change], tasks: [Detail.Task]) {
-        switch message {
-            case .goBack:
-                return (changes: [], tasks: [.goBack])
+extension Detail.Work: ModuleWork {
+    public typealias Module = Detail
+    public var task: Detail.Task {
+        return { context, _ in
+            switch self {
+            case let .present(presentation):
+                DispatchQueue.main.async {
+                    switch presentation {}
+                }
+            case let .perform(task):
+                switch task {
+                case .bounce:
+                    context.parentInteractor(.backFromDetail)
+                    context.parentInteractor(.prepareDetail)
+                case .back:
+                    context.parentInteractor(.backFromDetail)
+                }
+            }
         }
     }
 }

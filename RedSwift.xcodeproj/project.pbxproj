@@ -7,36 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		405A3050220478EF003C6338 /* Module.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 405A3047220478EF003C6338 /* Module.framework */; };
-		405A3057220478EF003C6338 /* ModuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405A3056220478EF003C6338 /* ModuleTests.swift */; };
 		405A305C220478EF003C6338 /* Module.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 405A3047220478EF003C6338 /* Module.framework */; };
 		405A305D220478EF003C6338 /* Module.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 405A3047220478EF003C6338 /* Module.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		405A3066220478FC003C6338 /* Module.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405A3065220478FC003C6338 /* Module.swift */; };
 		405A306A220490B1003C6338 /* RootModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405A3069220490B1003C6338 /* RootModule.swift */; };
 		405A306C2204951D003C6338 /* DashboardModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405A306B2204951D003C6338 /* DashboardModule.swift */; };
 		405A306E2204B5E5003C6338 /* DetailModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405A306D2204B5E5003C6338 /* DetailModule.swift */; };
-		405A30702204B5FD003C6338 /* DashboardTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405A306F2204B5FD003C6338 /* DashboardTests.swift */; };
-		405A30722204C270003C6338 /* DetailTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405A30712204C270003C6338 /* DetailTests.swift */; };
 		423062782202E645007A86A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 423062772202E645007A86A4 /* AppDelegate.swift */; };
 		4230627F2202E647007A86A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4230627E2202E647007A86A4 /* Assets.xcassets */; };
 		423062822202E647007A86A4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 423062802202E647007A86A4 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		405A3051220478EF003C6338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4230626C2202E645007A86A4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 405A3046220478EF003C6338;
-			remoteInfo = Module;
-		};
-		405A3053220478EF003C6338 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4230626C2202E645007A86A4 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 423062732202E645007A86A4;
-			remoteInfo = RedSwift;
-		};
 		405A305A220478EF003C6338 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4230626C2202E645007A86A4 /* Project object */;
@@ -63,15 +45,10 @@
 /* Begin PBXFileReference section */
 		405A3047220478EF003C6338 /* Module.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Module.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		405A304A220478EF003C6338 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		405A304F220478EF003C6338 /* ModuleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ModuleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		405A3056220478EF003C6338 /* ModuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleTests.swift; sourceTree = "<group>"; };
-		405A3058220478EF003C6338 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		405A3065220478FC003C6338 /* Module.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Module.swift; sourceTree = "<group>"; };
 		405A3069220490B1003C6338 /* RootModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootModule.swift; sourceTree = "<group>"; };
 		405A306B2204951D003C6338 /* DashboardModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardModule.swift; sourceTree = "<group>"; };
 		405A306D2204B5E5003C6338 /* DetailModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailModule.swift; sourceTree = "<group>"; };
-		405A306F2204B5FD003C6338 /* DashboardTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardTests.swift; sourceTree = "<group>"; };
-		405A30712204C270003C6338 /* DetailTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailTests.swift; sourceTree = "<group>"; };
 		423062742202E645007A86A4 /* RedSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RedSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		423062772202E645007A86A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4230627E2202E647007A86A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -84,14 +61,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		405A304C220478EF003C6338 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				405A3050220478EF003C6338 /* Module.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,23 +87,11 @@
 			path = Module;
 			sourceTree = "<group>";
 		};
-		405A3055220478EF003C6338 /* ModuleTests */ = {
-			isa = PBXGroup;
-			children = (
-				405A3056220478EF003C6338 /* ModuleTests.swift */,
-				405A3058220478EF003C6338 /* Info.plist */,
-				405A306F2204B5FD003C6338 /* DashboardTests.swift */,
-				405A30712204C270003C6338 /* DetailTests.swift */,
-			);
-			path = ModuleTests;
-			sourceTree = "<group>";
-		};
 		4230626B2202E645007A86A4 = {
 			isa = PBXGroup;
 			children = (
 				423062762202E645007A86A4 /* RedSwift */,
 				405A3048220478EF003C6338 /* Module */,
-				405A3055220478EF003C6338 /* ModuleTests */,
 				423062752202E645007A86A4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -144,7 +101,6 @@
 			children = (
 				423062742202E645007A86A4 /* RedSwift.app */,
 				405A3047220478EF003C6338 /* Module.framework */,
-				405A304F220478EF003C6338 /* ModuleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -191,25 +147,6 @@
 			productReference = 405A3047220478EF003C6338 /* Module.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		405A304E220478EF003C6338 /* ModuleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 405A3064220478EF003C6338 /* Build configuration list for PBXNativeTarget "ModuleTests" */;
-			buildPhases = (
-				405A304B220478EF003C6338 /* Sources */,
-				405A304C220478EF003C6338 /* Frameworks */,
-				405A304D220478EF003C6338 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				405A3052220478EF003C6338 /* PBXTargetDependency */,
-				405A3054220478EF003C6338 /* PBXTargetDependency */,
-			);
-			name = ModuleTests;
-			productName = ModuleTests;
-			productReference = 405A304F220478EF003C6338 /* ModuleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		423062732202E645007A86A4 /* RedSwift */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 423062912202E647007A86A4 /* Build configuration list for PBXNativeTarget "RedSwift" */;
@@ -243,10 +180,6 @@
 						CreatedOnToolsVersion = 10.1;
 						LastSwiftMigration = 1010;
 					};
-					405A304E220478EF003C6338 = {
-						CreatedOnToolsVersion = 10.1;
-						TestTargetID = 423062732202E645007A86A4;
-					};
 					423062732202E645007A86A4 = {
 						CreatedOnToolsVersion = 10.1;
 					};
@@ -267,20 +200,12 @@
 			targets = (
 				423062732202E645007A86A4 /* RedSwift */,
 				405A3046220478EF003C6338 /* Module */,
-				405A304E220478EF003C6338 /* ModuleTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		405A3045220478EF003C6338 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		405A304D220478EF003C6338 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -310,16 +235,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		405A304B220478EF003C6338 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				405A30702204B5FD003C6338 /* DashboardTests.swift in Sources */,
-				405A30722204C270003C6338 /* DetailTests.swift in Sources */,
-				405A3057220478EF003C6338 /* ModuleTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		423062702202E645007A86A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -331,16 +246,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		405A3052220478EF003C6338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 405A3046220478EF003C6338 /* Module */;
-			targetProxy = 405A3051220478EF003C6338 /* PBXContainerItemProxy */;
-		};
-		405A3054220478EF003C6338 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 423062732202E645007A86A4 /* RedSwift */;
-			targetProxy = 405A3053220478EF003C6338 /* PBXContainerItemProxy */;
-		};
 		405A305B220478EF003C6338 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 405A3046220478EF003C6338 /* Module */;
@@ -414,44 +319,6 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
-		405A3060220478EF003C6338 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = ModuleTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = pl.kaqu.ModuleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RedSwift.app/RedSwift";
-			};
-			name = Debug;
-		};
-		405A3061220478EF003C6338 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = ModuleTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = pl.kaqu.ModuleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RedSwift.app/RedSwift";
 			};
 			name = Release;
 		};
@@ -615,15 +482,6 @@
 			buildConfigurations = (
 				405A305E220478EF003C6338 /* Debug */,
 				405A305F220478EF003C6338 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		405A3064220478EF003C6338 /* Build configuration list for PBXNativeTarget "ModuleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				405A3060220478EF003C6338 /* Debug */,
-				405A3061220478EF003C6338 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

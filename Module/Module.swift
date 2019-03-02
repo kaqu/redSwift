@@ -1,111 +1,132 @@
-//
-//  Module.swift
-//  Module
-//
-//  Created by Kacper Kaliński on 01/02/2019.
-//  Copyright © 2019 Miquido. All rights reserved.
-//
+import Foundation
 
-public protocol ModuleDescription {
-    /// Controller of module based on its description
-    /// Controlls and binds all parts of module
-    typealias Controller = ModuleController<Self>
-
-    /// State of module
-    associatedtype State
-
-    /// What changed internally (how to update view)
-    associatedtype Change
-
-    /// What needs to be done externally
-    associatedtype Task
-
-    /// What actions it allows
-    associatedtype Message
-
-    /// Context of existence in which module operates
-    /// It may pass dependencies and services
-    /// should not contain other controllers directly
-    associatedtype Context
-
-    /// View abstraction used to present changes
-    typealias Presenter = ModulePresenter<Self>
-
-    /// Tasks and display changes based on initial state
-    /// Called once when module controller becomes initialized
-    static func initialize(state: State) -> (changes: [Change], tasks: [Task])
-
-    /// Factory of workers based on given context
-    /// Worker executes Tasks generated in module
-    static func workerFactory(context: Context) -> (@escaping (Message) -> Void, Task) -> Void
-    
-    /// Factory of presenters
-    static func presenterFactory() -> Presenter
-
-    /// Core logic of the module
-    /// Consumes Message with given state that can be mutated
-    /// and produces internal changes and external tasks
-    static func dispatcher(state: inout State, message: Message) -> (changes: [Change], tasks: [Task])
-
-    /// Factory method creating ModuleController
-    /// based on its description, provided context and state
-    static func build(context: Context, presenter: Presenter, initialState: State) -> Controller
+public protocol ModuleOperation {
+    associatedtype Module: ModuleDescription where Module.Operation == Self
+    var action: Module.Action { get }
 }
 
-public struct ModulePresenter<Module: ModuleDescription> {
-    internal var present: (Module.Change) -> Void
-    internal var setup: (Module.Controller) -> Void
-    public var uiViewController: () -> UIViewController?
-    public var uiView: () ->  UIView?
+public protocol ModuleWork {
+    associatedtype Module: ModuleDescription where Module.Work == Self
+    var task: Module.Task { get }
+}
+
+public protocol ModuleDescription {
+    typealias Module = ModuleInstance<Self>
     
-    public init(setup: @escaping (Module.Controller) -> Void,
-                present: @escaping (Module.Change) -> Void,
-                uiViewController: @escaping () -> UIViewController? = { return nil },
-                uiView: @escaping () ->  UIView? = { return nil }) {
-        self.setup = setup
-        self.present = present
-        self.uiViewController = uiViewController
-        self.uiView = uiView
-    }
+    associatedtype State
+    associatedtype Context
+    
+    typealias Action = (inout State) -> [Work]
+    associatedtype Operation: ModuleOperation where Operation.Module == Self
+    
+    typealias Callback = (Operation) -> Void
+    typealias Task = (Context, @escaping Callback) -> Void
+    associatedtype Work: ModuleWork where Work.Module == Self
+    
+    static var initialization: [Operation] { get }
+    static func instantiate(with state: State, in context: Context, using executor: ModuleExecutor) -> ModuleInstance<Self>
 }
 
 extension ModuleDescription {
-    public static func build(context: Context, presenter: Presenter = Self.presenterFactory(), initialState: State) -> Controller {
-        return .init(state: initialState,
-                     initialize: Self.initialize(state:),
-                     dispatcher: Self.dispatcher(state:message:),
-                     worker: Self.workerFactory(context: context),
-                     presenter: presenter)
+    public static var initialization: [Operation] { return [] }
+    public static func instantiate(with state: State, in context: Context, using executor: ModuleExecutor = DispatchQueue(label: "\(Self.self) Executor")) -> ModuleInstance<Self> {
+        return .init(state: state, context: context, executor: executor)
     }
 }
 
-public final class ModuleController<Module: ModuleDescription> {
-    public var uiViewController: UIViewController? { return presenter.uiViewController() }
-    public var uiView: UIView? { return presenter.uiView() }
-    private var state: Module.State
-    private let dispatcher: (inout Module.State, Module.Message) -> (changes: [Module.Change], tasks: [Module.Task])
-    private let worker: (@escaping (Module.Message) -> Void, Module.Task) -> Void
-    private var presenter: Module.Presenter
-
-    public init(state: Module.State,
-                initialize: (Module.State) -> (changes: [Module.Change], tasks: [Module.Task]),
-                dispatcher: @escaping (inout Module.State, Module.Message) -> (changes: [Module.Change], tasks: [Module.Task]),
-                worker: @escaping (@escaping (Module.Message) -> Void, Module.Task) -> Void,
-                presenter: Module.Presenter) {
+public final class ModuleInstance<Description: ModuleDescription> {
+    public typealias State = Description.State
+    public typealias Context = Description.Context
+    
+    public typealias Action = Description.Action
+    public typealias Operation = Description.Operation
+    
+    public typealias Callback = Description.Callback
+    public typealias Work = Description.Work
+    public typealias Task = Description.Task
+    
+    private var state: State
+    private let context: Context
+    private let executor: ModuleExecutor
+    
+    public init(state: State, context: Context, executor: ModuleExecutor) {
         self.state = state
-        self.dispatcher = dispatcher
-        self.worker = worker
-        self.presenter = presenter
-        presenter.setup(self)
-        let (updates, tasks) = initialize(self.state)
-        updates.forEach { presenter.present($0) }
-        tasks.forEach { worker(self.handle, $0) }
+        self.context = context
+        self.executor = executor
+        Description.initialization.forEach(perform)
     }
+    
+    public func perform(_ operation: Operation) {
+        enqueue(operation.action)
+    }
+    
+    public func weakPerform() -> (Operation) -> Void {
+        return { [weak self] operation in
+            self?.perform(operation)
+        }
+    }
+    
+    private let queueLock: NSRecursiveLock = .init()
+    private var actionQueue: [Action] = []
+    private func enqueue(_ action: @escaping Action) {
+        queueLock.lock()
+        defer { queueLock.unlock() }
+        actionQueue.append(action)
+        executeIfNeeded()
+    }
+    
+    private let executionLock: NSRecursiveLock = .init()
+    private var isExecuting: Bool = false
+    private func executeIfNeeded() {
+        executionLock.lock()
+        guard !isExecuting else { return executionLock.unlock() }
+        isExecuting = true
+        executionLock.unlock()
+        executor.execute {
+            defer {
+                self.executionLock.lock()
+                self.isExecuting = false
+                self.executionLock.unlock()
+            }
+            defer { self.queueLock.unlock() }
+            while ({ () -> Bool in
+                self.queueLock.lock()
+                return !self.actionQueue.isEmpty
+                }()) {
+                    let action = self.actionQueue.removeFirst()
+                    self.queueLock.unlock()
+                    for work in action(&self.state) {
+                        work.task(self.context, self.weakPerform())
+                    }
+            }
+        }
+    }
+}
 
-    /// Perform action based on given message
-    public func handle(_ message: Module.Message) {
-        let (changes, tasks) = dispatcher(&state, message)
-        changes.forEach { presenter.present($0) }
-        tasks.forEach { worker(self.handle, $0) }
+public protocol ModuleExecutor {
+    func execute(_ closure: @escaping () -> Void)
+}
+
+public struct InstantExecutor: ModuleExecutor {
+    public init() {}
+    
+    public func execute(_ closure: @escaping () -> Void) {
+        closure()
+    }
+}
+
+extension DispatchQueue: ModuleExecutor {
+    public func execute(_ closure: @escaping () -> Void) {
+        async(execute: closure)
+    }
+}
+
+extension OperationQueue: ModuleExecutor {
+    public func execute(_ closure: @escaping () -> Void) {
+        if OperationQueue.current == self {
+            closure()
+        } else {
+            addOperation(closure)
+        }
     }
 }

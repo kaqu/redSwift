@@ -1,66 +1,76 @@
-//
-//  RootModule.swift
-//  Module
-//
-//  Created by Kacper Kaliński on 01/02/2019.
-//  Copyright © 2019 Miquido. All rights reserved.
-//
-
 import UIKit
 
 public enum Root: ModuleDescription {
-    public static func presenterFactory() -> Presenter {
-        let window: UIWindow = .init(frame: UIScreen.main.bounds)
-        return .init(setup: { _ in },
-                     present: { change in
-                         switch change {
-                             case let .rootView(viewController):
-                                 window.rootViewController = viewController
-                                 window.makeKeyAndVisible()
-                         }
-        })
-    }
-
-    public struct State {
-        fileprivate var dashboardController: Dashboard.Controller?
-        public init() {}
-    }
-
-    public enum Change {
-        case rootView(UIViewController)
-    }
-
-    public enum Task {
-        case makeDashboard
-    }
-
-    public enum Message {
-        case setupDashboard(Dashboard.Controller)
-    }
-
-    public typealias Context = Void
-
-    public static func initialize(state _: Root.State) -> (changes: [Root.Change], tasks: [Root.Task]) {
-        return (changes: [], tasks: [.makeDashboard])
-    }
-
-    public static func workerFactory(context _: Root.Context) -> (@escaping (Root.Message) -> Void, Root.Task) -> Void {
-        return { handle, task in
-            switch task {
-                case .makeDashboard:
-                    let dashboardController = Dashboard.build(context: .init(parentHandle: handle), initialState: Dashboard.State())
-                    handle(.setupDashboard(dashboardController))
+    public typealias View = UIWindow
+    
+    public struct Presenter {
+        fileprivate let setRootViewController: (UIViewController) -> Void
+        
+        public init(setRootViewController: @escaping (UIViewController) -> Void) {
+            self.setRootViewController = setRootViewController
+        }
+        
+        public init(window: UIWindow = .init(frame: UIScreen.main.bounds)) {
+            self.setRootViewController = {
+                window.rootViewController = $0
+                window.makeKeyAndVisible()
             }
         }
     }
+    
+    public struct State {
+        fileprivate var dashboardModule: Dashboard.Module?
+        public init() {}
+    }
+    
+    public struct Context {
+        fileprivate let presenter: Presenter
+        public init(presenter: Presenter) {
+            self.presenter = presenter
+        }
+    }
+    
+    public enum Operation {
+        case prepareDashboard
+        case setupDashboard(Dashboard.Module, view: Dashboard.View)
+    }
+    
+    public enum Work {
+        case buildDashboard(Dashboard.State)
+        case show(rootViewController: UIViewController)
+    }
+}
 
-    public static func dispatcher(state: inout Root.State, message: Root.Message) -> (changes: [Root.Change], tasks: [Root.Task]) {
-        switch message {
-            case let .setupDashboard(controller):
-                state.dashboardController = controller
-                if let viewController = controller.uiViewController {
-                    return (changes: [.rootView(viewController)], tasks: [])
-                } else { fatalError() }
+extension Root.Operation: ModuleOperation {
+    public typealias Module = Root
+    public var action: Root.Action {
+        return { state in
+            switch self {
+            case .prepareDashboard:
+                return [.buildDashboard(Dashboard.State())]
+            case let .setupDashboard(module, view):
+                state.dashboardModule = module
+                return [.show(rootViewController: UINavigationController(rootViewController: view))]
+            }
+        }
+    }
+}
+
+extension Root.Work: ModuleWork {
+    public typealias Module = Root
+    public var task: Root.Task {
+        return { context, callback in
+            switch self {
+            case let .buildDashboard(state):
+                let dashboardView: Dashboard.View = .init()
+                let dashboardModule: Dashboard.Module
+                    = Dashboard.instantiate(with: state,
+                                            in: Dashboard.Context(presenter: Dashboard.Presenter(dashboardView: dashboardView)))
+                dashboardView.interactor = dashboardModule.weakPerform()
+                callback(.setupDashboard(dashboardModule, view: dashboardView))
+            case let .show(viewController):
+                context.presenter.setRootViewController(viewController)
+            }
         }
     }
 }
